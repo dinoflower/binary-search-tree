@@ -1,19 +1,38 @@
 # frozen_string_literal: true
 
+require 'pry-byebug'
 require_relative 'node'
 
 # creates and balances BST from array
 class Tree
-  attr_reader :root
+  attr_reader :root, :array
 
   def initialize(array)
     @array = array
-    @root = nil
+    @root = build_tree(array, 0, array.length - 1)
   end
 
-  def build_tree(array); end
+  def build_tree(array, first, last)
+    array.sort.uniq!
+    return nil if first > last
 
-  def insert(value); end
+    mid = (first + last) / 2
+    root = Node.new(array[mid])
+    root.left_chldn = build_tree(array, first, mid - 1)
+    root.rt_chldn = build_tree(array, mid + 1, last)
+    root
+  end
+
+  # currently not inserting as proper subchildren and parent nodes
+  def insert(value, root)
+    if root.nil?
+      Node.new(value)
+    elsif root > value
+      root.right_chldn.insert(value, rt_chldn.root)
+    elsif root < value
+      root.left_chldn.insert(value, left_chldn.root)
+    end
+  end
 
   def delete(value); end
 
