@@ -23,34 +23,26 @@ class Tree
     root
   end
 
-  def insert(value)
-    insert_value(value, @root)
-  end
-
-  def insert_value(value, root)
+  def insert(value, root = @root)
     if root.nil?
       root = Node.new(value)
     elsif root.data == value
       root
     elsif root.data > value
-      root.left_chldn = insert_value(value, root.left_chldn)
+      root.left_chldn = insert(value, root.left_chldn)
     else
-      root.rt_chldn = insert_value(value, root.rt_chldn)
+      root.rt_chldn = insert(value, root.rt_chldn)
     end
     root
   end
 
-  def delete(value)
-    delete_value(value, @root)
-  end
-
-  def delete_value(value, root)
+  def delete(value, root = @root)
     if root.nil?
       root
     elsif root.data > value
-      root.left_chldn = delete_value(value, root.left_chldn)
+      root.left_chldn = delete(value, root.left_chldn)
     elsif root.data < value
-      root.rt_chldn = delete_value(value, root.rt_chldn)
+      root.rt_chldn = delete(value, root.rt_chldn)
     else
       root = check_chldrn(root)
     end
@@ -64,7 +56,7 @@ class Tree
       root.left_chldn
     else
       root.data = find_min(root.rt_chldn)
-      root.rt_chldn = delete_value(root.data, root.rt_chldn)
+      root.rt_chldn = delete(root.data, root.rt_chldn)
       root
     end
   end
@@ -78,7 +70,16 @@ class Tree
     min
   end
 
-  def find(value); end
+  def find(value, root = @root)
+    until root.nil? || value == root.data
+      root = if root.data > value
+               root.left_chldn
+             else
+               root.rt_chldn
+             end
+    end
+    root
+  end
 
   def level_order
     # arr = child nodes to traverse
