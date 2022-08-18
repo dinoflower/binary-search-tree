@@ -81,14 +81,17 @@ class Tree
     root
   end
 
+  # array tracks child nodes to traverse
   def level_order
-    # arr = child nodes to traverse
-    if block_given?
-      # yield queue to block
-    else
-      # don't do the searches
+    arr = []
+    arr << root
+    arr.each do |element|
+      arr.push(element.left_chldn) unless element.left_chldn.nil?
+      arr.push(element.rt_chldn) unless element.rt_chldn.nil?
     end
-    # return two nodes or array queue
+    return arr unless block_given?
+
+    arr.each { |element| yield(element) }
   end
 
   # for these three, return array unless block given
