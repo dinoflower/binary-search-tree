@@ -33,9 +33,9 @@ class Tree
     elsif root.data == value
       root
     elsif root.data > value
-      root.left_chldn = insert(value, root.left_chldn)
+      root.left_chldn = insert_value(value, root.left_chldn)
     else
-      root.rt_chldn = insert(value, root.rt_chldn)
+      root.rt_chldn = insert_value(value, root.rt_chldn)
     end
     root
   end
@@ -52,8 +52,30 @@ class Tree
     elsif root.data < value
       root.rt_chldn = delete_value(value, root.rt_chldn)
     else
-      # call a helper method since the data now matches - check_chldrn(value, root)?
+      root = check_chldrn(root)
     end
+    root
+  end
+
+  def check_chldrn(root)
+    if root.left_chldn.nil?
+      root.rt_chldn
+    elsif root.rt_chldn.nil?
+      root.left_chldn
+    else
+      root.data = find_min(root.rt_chldn)
+      root.rt_chldn = delete_value(root.data, root.rt_chldn)
+      root
+    end
+  end
+
+  def find_min(root)
+    min = root.data
+    until root.left_chldn.nil?
+      min = root.left_chldn.data
+      root = root.left_chldn
+    end
+    min
   end
 
   def find(value); end
