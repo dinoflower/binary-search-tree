@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'pp'
 require 'pry-byebug'
 require_relative 'node'
 
@@ -18,8 +19,8 @@ class Tree
 
     mid = (first + last) / 2
     root = Node.new(array[mid])
-    root.left_chldn = build_tree(array, first, mid - 1)
-    root.rt_chldn = build_tree(array, mid + 1, last)
+    root.left = build_tree(array, first, mid - 1)
+    root.right = build_tree(array, mid + 1, last)
     root
   end
 
@@ -29,9 +30,9 @@ class Tree
     elsif root.data == value
       root
     elsif root.data > value
-      root.left_chldn = insert(value, root.left_chldn)
+      root.left = insert(value, root.left)
     else
-      root.rt_chldn = insert(value, root.rt_chldn)
+      root.right = insert(value, root.right)
     end
     root
   end
@@ -40,9 +41,9 @@ class Tree
     if root.nil?
       root
     elsif root.data > value
-      root.left_chldn = delete(value, root.left_chldn)
+      root.left = delete(value, root.left)
     elsif root.data < value
-      root.rt_chldn = delete(value, root.rt_chldn)
+      root.right = delete(value, root.right)
     else
       root = check_chldrn(root)
     end
@@ -50,22 +51,22 @@ class Tree
   end
 
   def check_chldrn(root)
-    if root.left_chldn.nil?
-      root.rt_chldn
-    elsif root.rt_chldn.nil?
-      root.left_chldn
+    if root.left.nil?
+      root.right
+    elsif root.right.nil?
+      root.left
     else
-      root.data = find_min(root.rt_chldn)
-      root.rt_chldn = delete(root.data, root.rt_chldn)
+      root.data = find_min(root.right)
+      root.right = delete(root.data, root.right)
       root
     end
   end
 
   def find_min(root)
     min = root.data
-    until root.left_chldn.nil?
-      min = root.left_chldn.data
-      root = root.left_chldn
+    until root.left.nil?
+      min = root.left.data
+      root = root.left
     end
     min
   end
@@ -73,31 +74,49 @@ class Tree
   def find(value, root = @root)
     until root.nil? || value == root.data
       root = if root.data > value
-               root.left_chldn
+               root.left
              else
-               root.rt_chldn
+               root.right
              end
     end
     root
   end
 
-  # array tracks child nodes to traverse
   def level_order(&block)
     queue = [@root]
     queue.each do |node|
-      queue << node.left_chldn unless node.left_chldn.nil?
-      queue << node.rt_chldn unless node.rt_chldn.nil?
+      queue << node.left unless node.left.nil?
+      queue << node.right unless node.right.nil?
     end
     block_given? ? queue.each(&block) : queue
   end
 
-  # for these three, return array unless block given
-  # otherwise yield nodes to block in correct order
-  def inorder; end
+  def inorder(root = @root, queue = [], &block)
+    return if root.nil?
 
-  def preorder; end
+    inorder(root.left, queue)
+    queue << root
+    inorder(root.right, queue)
+    block_given? ? queue.each(&block) : queue
+  end
 
-  def postorder; end
+  def preorder(root = @root, queue = [], &block)
+    return if root.nil?
+
+    queue << root
+    preorder(root.left, queue)
+    preorder(root.right, queue)
+    block_given? ? queue.each(&block) : queue
+  end
+
+  def postorder(root = @root, queue = [], &block)
+    return if root.nil?
+
+    postorder(root.left, queue)
+    postorder(root.right, queue)
+    queue << root
+    block_given? ? queue.each(&block) : queue
+  end
 
   def height(node); end
 
