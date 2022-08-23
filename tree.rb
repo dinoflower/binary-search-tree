@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'pp'
 require 'pry-byebug'
 require_relative 'node'
 
@@ -9,12 +8,11 @@ class Tree
   attr_reader :root
 
   def initialize(array)
-    @array = array
-    @root = build_tree(array, 0, array.length - 1)
+    @array = array.sort.uniq!
+    @root = build_tree(array.sort.uniq, 0, array.sort.uniq.length - 1)
   end
 
   def build_tree(array, first, last)
-    array.sort.uniq!
     return nil if first > last
 
     mid = (first + last) / 2
@@ -72,13 +70,7 @@ class Tree
   end
 
   def find(value, root = @root)
-    until root.nil? || value == root.data
-      root = if root.data > value
-               root.left
-             else
-               root.right
-             end
-    end
+    root = root.data > value ? root.left : root.right until root.nil? || value == root.data
     root
   end
 
