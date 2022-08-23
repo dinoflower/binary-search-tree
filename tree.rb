@@ -119,10 +119,14 @@ class Tree
   def height(node = @root)
     return 0 if node.nil?
 
-    [height(node.left), height(node.right)].max + 1
+    [height(node.left), height(node.right)].max
   end
 
-  def depth(node); end
+  def depth(node, root = @root)
+    return 0 if node == root
+
+    node.data < root.data ? depth(node, root.left) + 1 : depth(node, root.right) + 1
+  end
 
   def balanced?; end
 
