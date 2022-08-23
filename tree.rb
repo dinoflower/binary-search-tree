@@ -22,6 +22,12 @@ class Tree
     root
   end
 
+  def print_tree(node = @root, prefix = '', is_left = true)
+    print_tree(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
+    puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
+    print_tree(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
+  end
+
   def insert(value, root = @root)
     if root.nil?
       root = Node.new(value)
@@ -110,7 +116,11 @@ class Tree
     block_given? ? queue.each(&block) : queue
   end
 
-  def height(node); end
+  def height(node = @root)
+    return 0 if node.nil?
+
+    [height(node.left), height(node.right)].max + 1
+  end
 
   def depth(node); end
 
