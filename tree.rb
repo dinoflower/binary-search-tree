@@ -3,7 +3,7 @@
 require 'pry-byebug'
 require_relative 'node'
 
-# creates and balances BST from array
+# creates balanced BST from array and includes methods for traversal, insertion, and deletion
 class Tree
   attr_reader :root
 
@@ -29,49 +29,35 @@ class Tree
   end
 
   def insert(value, root = @root)
-    if root.nil?
-      root = Node.new(value)
-    elsif root.data == value
-      root
-    elsif root.data > value
-      root.left = insert(value, root.left)
-    else
-      root.right = insert(value, root.right)
-    end
+    return Node.new(value) if root.nil?
+
+    root.data > value ? root.left = insert(value, root.left) : root.right = insert(value, root.right)
     root
   end
 
   def delete(value, root = @root)
-    if root.nil?
-      root
-    elsif root.data > value
-      root.left = delete(value, root.left)
-    elsif root.data < value
-      root.right = delete(value, root.right)
-    else
+    return root if root.nil?
+
+    if root.data == value
       root = check_chldrn(root)
+    else
+      root.data > value ? root.left = delete(value, root.left) : root.right = delete(value, root.right)
     end
     root
   end
 
   def check_chldrn(root)
-    if root.left.nil?
-      root.right
-    elsif root.right.nil?
-      root.left
-    else
-      root.data = find_min(root.right)
-      root.right = delete(root.data, root.right)
-      root
-    end
+    return root.right if root.left.nil?
+
+    return root.left if root.right.nil?
+
+    temp = find_min(root.right)
+    root.right = delete(temp.data, root.right)
+    root
   end
 
   def find_min(root)
-    min = root.data
-    until root.left.nil?
-      min = root.left.data
-      root = root.left
-    end
+    min = root.left until root.left.nil?
     min
   end
 
