@@ -102,6 +102,7 @@ class Tree
     block_given? ? queue.each(&block) : queue
   end
 
+  # this method was working yesterday - what's wrong with it now?
   def height(node = @root)
     return 0 if node.nil?
 
@@ -114,7 +115,15 @@ class Tree
     node.data < root.data ? depth(node, root.left) + 1 : depth(node, root.right) + 1
   end
 
-  def balanced?; end
+  def balanced?(node = @root)
+    return true if node.nil?
+
+    if (height(node.left) - height(node.right)).abs <= 1 && balanced?(node.left) && balanced?(node.right)
+      true
+    else
+      false
+    end
+  end
 
   def rebalance; end
 end
