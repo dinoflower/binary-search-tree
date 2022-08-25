@@ -102,11 +102,10 @@ class Tree
     block_given? ? queue.each(&block) : queue
   end
 
-  # this method was working yesterday - what's wrong with it now?
   def height(node = @root)
-    return 0 if node.nil?
+    return -1 if node.nil?
 
-    [height(node.left), height(node.right)].max
+    [height(node.left), height(node.right)].max + 1
   end
 
   def depth(node, root = @root)
