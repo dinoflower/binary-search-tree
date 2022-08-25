@@ -4,21 +4,9 @@ require_relative 'node'
 
 # creates balanced BST from array and includes methods for traversal, insertion, and deletion
 class Tree
-  attr_reader :root
-
   def initialize(array)
     @array = array.sort.uniq!
     @root = build_tree(array.sort.uniq, 0, array.sort.uniq.length - 1)
-  end
-
-  def build_tree(array, first, last)
-    return nil if first > last
-
-    mid = (first + last) / 2
-    root = Node.new(array[mid])
-    root.left = build_tree(array, first, mid - 1)
-    root.right = build_tree(array, mid + 1, last)
-    root
   end
 
   def print_tree(node = @root, prefix = '', is_left = true)
@@ -43,21 +31,6 @@ class Tree
       root.data > value ? root.left = delete(value, root.left) : root.right = delete(value, root.right)
     end
     root
-  end
-
-  def check_chldrn(root)
-    return root.right if root.left.nil?
-
-    return root.left if root.right.nil?
-
-    temp = find_min(root.right)
-    root.right = delete(temp.data, root.right)
-    root
-  end
-
-  def find_min(root)
-    min = root.left until root.left.nil?
-    min
   end
 
   def find(value, root = @root)
@@ -127,5 +100,34 @@ class Tree
     queue = []
     inorder { |node| queue << node.data }
     @root = build_tree(queue.sort.uniq, 0, queue.sort.uniq.length - 1)
+  end
+
+  private
+
+  attr_reader :root
+
+  def build_tree(array, first, last)
+    return nil if first > last
+
+    mid = (first + last) / 2
+    root = Node.new(array[mid])
+    root.left = build_tree(array, first, mid - 1)
+    root.right = build_tree(array, mid + 1, last)
+    root
+  end
+
+  def check_chldrn(root)
+    return root.right if root.left.nil?
+
+    return root.left if root.right.nil?
+
+    temp = find_min(root.right)
+    root.right = delete(temp.data, root.right)
+    root
+  end
+
+  def find_min(root)
+    min = root.left until root.left.nil?
+    min
   end
 end
