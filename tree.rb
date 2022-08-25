@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'pry-byebug'
 require_relative 'node'
 
 # creates balanced BST from array and includes methods for traversal, insertion, and deletion
@@ -124,5 +123,9 @@ class Tree
     end
   end
 
-  def rebalance; end
+  def rebalance
+    queue = []
+    inorder { |node| queue << node.data }
+    @root = build_tree(queue.sort.uniq, 0, queue.sort.uniq.length - 1)
+  end
 end
